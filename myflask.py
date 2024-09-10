@@ -48,10 +48,25 @@ def login():
        else:  
           return render_template('login.html')        
 
-#渲染更多内容
+#渲染更多内容,传入不同类型的参数
 @app.route('/info')
 def info():
-    return render_template('info/info.html')
+    # 往模板中传入的数据
+    my_str = 'Hello Word'
+    my_int = 10
+    my_array = [3, 4, 2, 1, 7, 9]
+    my_dict = {
+        'name': 'xiaoming',
+        'age': 18
+    }
+    
+    return render_template('info/info.html',
+                           my_str=my_str,
+                           my_int=my_int,
+                           my_array=my_array,
+                           my_dict=my_dict
+                          )
+
 
 if __name__ == '__main__':
    #app.run(host, port, debug, options) 
