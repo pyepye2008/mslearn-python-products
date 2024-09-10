@@ -10,5 +10,29 @@
    <br />{{ my_int }}
    <br />{{ my_array }}
    <br />{{ my_dict }}
+
+   模板数据中相关List数据
+   <br /> my_array 数组值 {{ my_array[1] }}
+   <br /> 循环值：</br>
+   {% for item in my_array[:-1] %}
+        {{ item }}
+   {% endfor %}
+   
+   <br /> 将数据打印现来一：
+   {% for i in range(my_array|length) %}
+       {{ my_array[i] }}
+   {% endfor %}
+
+   <br /> 将数据打印现来二：
+   {% for i in my_array %}
+       {{ i }}
+   {% endfor %}
+
+   <br/> 下面打印 my_dict </br>
+
+   {{my_dict['name']}} </br>
+   {{ my_dict.age }}
+
+
 </body>
 </html> 
