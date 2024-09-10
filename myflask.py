@@ -22,8 +22,7 @@ def show_user_profile(username):
     
 #渲染Html,表单
 @app.route('/login', methods=['GET', 'POST'])
-def login():
-    
+def login():    
     
     if request.method == 'POST':
        print("use post")
