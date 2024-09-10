@@ -1,0 +1,7 @@
+.logosize{
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+    border-radius: 50%; 
+    /*float: left;*/
+}
