@@ -1,14 +1,20 @@
 #学习Flask 2024年02月25日 Stanley
 
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, flash, make_response, redirect, render_template, request, session, url_for
 app = Flask(__name__)
+app.secret_key = 'fkdjsafjdkfdlkjfadskjfadskljdsfklj' #设定 Session时需要一个秘钥
 
 @app.route('/')
 def index():
-    return 'Hello, World!'
+    #return 'Hello, World!'
+    return render_template('index.html')
 
 @app.route('/hello/<name>')
 def hello(name):
+    if 'username' in session:
+       username = session['username']
+       return 'Logged in as ' + username + '<br>'      "<b><a href = '/logout'>click here to log out</a></b>"
+    
     return 'Hello, %s! <br/> <a href=/login>Back</a> ' % name   
 
 #动态跳转
@@ -28,7 +34,11 @@ def login():
        print("use post")
        nm = request.form['nm']   
        if nm == 'admin':
-          return redirect(url_for('hello',name='post success'))
+          #存储session
+          session['username'] = nm
+          #闪现消息
+          flash('You were successfully logged in')
+          return redirect(url_for('index',name='post success'))
        else:
           return redirect(url_for('hello', name= 'post fail'))   
     else: 
@@ -46,6 +56,12 @@ def login():
              return render_template('login.html')  
        else:  
           return render_template('login.html')        
+
+#退出登录
+@app.route('/logout')
+def  logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 #渲染更多内容,传入不同类型的参数
 @app.route('/info')
@@ -76,6 +92,31 @@ def result():
     if request.method == 'POST':
         result = request.form
         return render_template('result.html', result=result)
+
+#Cookier的设定
+@app.route('/setcookie', methods=['POST', 'GET'])
+def setcookie():
+    #设定响应
+    resp = make_response("set success") 
+    resp = make_response('Custom Response')
+    resp.headers['X-Custom-Header'] = 'Some value header info'
+    resp.status_code = 201
+    
+    resp.set_cookie("mycookie", "pyepye",max_age=3600)
+    return resp   
+ 
+ #读取Cookier
+@app.route('/getcookie')
+def getcookie():
+    name = request.cookies.get('mycookie')
+    return name
+ 
+#删除Cookier
+@app.route('/delcookie')
+def delcookie():
+    resp = make_response("del success")
+    resp.delete_cookie("mycookie")
+    return resp
 
 if __name__ == '__main__':
    #app.run(host, port, debug, options) 
