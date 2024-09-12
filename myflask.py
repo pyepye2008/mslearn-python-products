@@ -1,8 +1,18 @@
 #学习Flask 2024年02月25日 Stanley
 
+import os
 from flask import Flask, flash, make_response, redirect, render_template, request, session, url_for
+from werkzeug.utils import secure_filename
+
 app = Flask(__name__)
 app.secret_key = 'fkdjsafjdkfdlkjfadskjfadskljdsfklj' #设定 Session时需要一个秘钥
+
+#上传文件的配置
+app.config['UPLOAD_FOLDER'] = 'upload/'
+
+#模组化的方法
+# 导入各个模块并注册路由,需要使用蓝图的方式进行管理
+# from views.fileupload import view_fileupload
 
 @app.route('/')
 def index():
@@ -11,9 +21,10 @@ def index():
 
 @app.route('/hello/<name>')
 def hello(name):
+    
     if 'username' in session:
        username = session['username']
-       return 'Logged in as ' + username + '<br>'      "<b><a href = '/logout'>click here to log out</a></b>"
+       return 'Logged in as ' + username + '<br>'  "<b><a href = '/logout'>click here to log out</a></b>"
     
     return 'Hello, %s! <br/> <a href=/login>Back</a> ' % name   
 
@@ -118,6 +129,27 @@ def delcookie():
     resp.delete_cookie("mycookie")
     return resp
 
+#-------------------------
+#文件上传
+@app.route('/fileupload', methods=['GET', 'POST'])
+def fileupload():
+   return render_template('upload/fileupload.html')
+
+@app.route('/uploader', methods=['GET', 'POST'])
+def uploader():
+   if request.method == 'POST':
+      f = request.files['file']
+      print(request.files)
+      #f.save(f.filename)
+      #f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
+      f.save(app.config['UPLOAD_FOLDER']+secure_filename(f.filename))
+      #字符串拼接的多种方式
+      #print(app.config['UPLOAD_FOLDER'].join(secure_filename(f.filename)))
+      
+      return 'file uploaded successfully. <a href="/fileupload">Back</a>'
+   else:
+      return redirect(url_for('fileupload'))
+         
 if __name__ == '__main__':
    #app.run(host, port, debug, options) 
    #host = '0.0.0.0' 代表外网访问，127.0.0.1 代表本机访问
